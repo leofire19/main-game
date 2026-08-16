@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#182452">
+<meta name="theme-color" content="#C81D33">
 <title>MAIN · Asli atau AI?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#182452; --paper:#F3F5FA; --card:#FFFFFF;
+    --ink:#182452; --paper:#FBF5F0; --card:#FFFFFF;
+    --flag:#C81D33;
     --sun:#FFC53D; --red:#E5484D; --green:#18894F;
-    --chip:#E9EDF8; --muted:#5B6486; --line:#D9DEED;
+    --chip:#FBE7E4; --muted:#5B6486; --line:#EBD9D2;
     --radius:20px;
     --shadow:0 14px 34px rgba(24,36,82,.14);
     --serif:Georgia,'Times New Roman',serif;
@@ -36,10 +37,10 @@
   /* ---------- top bar ---------- */
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .brand{font-weight:900;font-style:italic;font-size:22px;letter-spacing:.5px}
-  .brand .dot{color:transparent;background:var(--sun);border-radius:50%;display:inline-block;width:10px;height:10px;margin-left:2px}
+  .brand .dot{color:transparent;background:var(--flag);border-radius:50%;display:inline-block;width:10px;height:10px;margin-left:2px}
   .langpill{display:flex;background:var(--chip);border-radius:999px;padding:3px}
   .langpill button{background:transparent;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px;color:var(--muted)}
-  .langpill button.on{background:var(--ink);color:#fff}
+  .langpill button.on{background:var(--flag);color:#fff}
 
   /* ---------- start ---------- */
   .hero{margin-top:4vh}
@@ -53,10 +54,10 @@
   .howrow .ic{font-size:20px}
   .modes{display:flex;gap:10px;margin:18px 0 14px}
   .mode{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px;font-weight:800;font-size:14px;color:var(--muted)}
-  .mode.on{border-color:var(--ink);color:var(--ink);background:#fff}
+  .mode.on{border-color:var(--flag);color:var(--ink);background:#fff}
   .mode small{display:block;font-weight:600;font-size:11px;margin-top:3px;color:var(--muted)}
   .cta{
-    background:var(--ink);color:#fff;font-weight:900;font-size:18px;letter-spacing:.5px;
+    background:var(--flag);color:#fff;font-weight:900;font-size:18px;letter-spacing:.5px;
     border-radius:16px;padding:18px;width:100%;
     box-shadow:5px 5px 0 var(--sun);
     transition:transform .08s ease, box-shadow .08s ease;
@@ -140,7 +141,7 @@
   .habit .hic{font-size:20px}
   .habit .ht{font-size:13.5px;line-height:1.5}
   .habit .ht b{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-  .nextbtn{width:100%;background:var(--ink);color:#fff;font-weight:900;font-size:16px;border-radius:14px;padding:15px;box-shadow:4px 4px 0 var(--sun)}
+  .nextbtn{width:100%;background:var(--flag);color:#fff;font-weight:900;font-size:16px;border-radius:14px;padding:15px;box-shadow:4px 4px 0 var(--sun)}
   .nextbtn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--sun)}
 
   /* ---------- results ---------- */
