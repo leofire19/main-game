@@ -1,0 +1,10 @@
+# Proposal/submission documents — not part of the app, keep out of the public repo
+*.docx
+MAIN_Proposal_Content.md
+MAIN_Pitch_Video_Script.md
+
+# Original unprocessed photos — only the resized copies ship
+assets/raw/
+
+# OS noise
+.DS_Store
