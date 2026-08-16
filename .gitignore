@@ -8,3 +8,6 @@ assets/raw/
 
 # OS noise
 .DS_Store
+
+# Proposal screenshots — not part of the app
+screenshots/
