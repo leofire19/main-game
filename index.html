@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#182452">
+<title>MAIN · Asli atau AI?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182452; --paper:#F3F5FA; --card:#FFFFFF;
+    --sun:#FFC53D; --red:#E5484D; --green:#18894F;
+    --chip:#E9EDF8; --muted:#5B6486; --line:#D9DEED;
+    --radius:20px;
+    --shadow:0 14px 34px rgba(24,36,82,.14);
+    --serif:Georgia,'Times New Roman',serif;
+    --sys:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Archivo',var(--sys);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .app{max-width:440px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:16px 16px 24px}
+  .screen{display:none;flex:1;flex-direction:column}
+  .screen.active{display:flex}
+  button{font-family:inherit;cursor:pointer;border:none}
+  button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:8px}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .brand{font-weight:900;font-style:italic;font-size:22px;letter-spacing:.5px}
+  .brand .dot{color:transparent;background:var(--sun);border-radius:50%;display:inline-block;width:10px;height:10px;margin-left:2px}
+  .langpill{display:flex;background:var(--chip);border-radius:999px;padding:3px}
+  .langpill button{background:transparent;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px;color:var(--muted)}
+  .langpill button.on{background:var(--ink);color:#fff}
+
+  /* ---------- start ---------- */
+  .hero{margin-top:4vh}
+  .kicker{font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)}
+  .logo{font-weight:900;font-style:italic;font-size:88px;line-height:.95;letter-spacing:-2px;margin:6px 0 2px}
+  .logo em{font-style:italic;background:linear-gradient(transparent 62%,var(--sun) 62%)}
+  .subtitle{font-family:var(--serif);font-style:italic;font-size:26px;margin-bottom:8px}
+  .tagline{color:var(--muted);font-size:15px;line-height:1.5;max-width:34ch}
+  .howto{margin:26px 0 8px;display:grid;gap:10px}
+  .howrow{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.4}
+  .howrow .ic{font-size:20px}
+  .modes{display:flex;gap:10px;margin:18px 0 14px}
+  .mode{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px;font-weight:800;font-size:14px;color:var(--muted)}
+  .mode.on{border-color:var(--ink);color:var(--ink);background:#fff}
+  .mode small{display:block;font-weight:600;font-size:11px;margin-top:3px;color:var(--muted)}
+  .cta{
+    background:var(--ink);color:#fff;font-weight:900;font-size:18px;letter-spacing:.5px;
+    border-radius:16px;padding:18px;width:100%;
+    box-shadow:5px 5px 0 var(--sun);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .cta:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--sun)}
+  .imgtip{margin-top:12px;border:2px dashed var(--line);border-radius:12px;padding:10px 12px;font-size:12.5px;color:var(--muted);display:none}
+  .foot{margin-top:auto;padding-top:22px;font-size:11.5px;color:var(--muted);line-height:1.5}
+
+  /* ---------- game ---------- */
+  .hud{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+  .hudchip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px}
+  .hudchip.warm{background:var(--sun);border-color:var(--sun)}
+  .hud .spacer{flex:1}
+  .stage{position:relative;flex:1;min-height:380px;margin-bottom:14px}
+  .card{
+    position:absolute;inset:0;background:var(--card);border-radius:var(--radius);
+    box-shadow:var(--shadow);border:1px solid var(--line);
+    padding:18px;display:flex;flex-direction:column;gap:12px;
+    touch-action:none;user-select:none;-webkit-user-select:none;
+  }
+  .card.behind{transform:scale(.95) translateY(14px);box-shadow:none;opacity:.7}
+  .card.spring{transition:transform .25s cubic-bezier(.2,.8,.3,1.2)}
+  .card.fly{transition:transform .3s ease-out,opacity .3s ease-out;opacity:0}
+  .typechip{align-self:flex-start;background:var(--ink);color:#fff;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border-radius:999px;padding:5px 11px}
+  .familychip{align-self:flex-start;background:var(--sun);color:var(--ink);font-weight:700;font-size:12px;border-radius:999px;padding:5px 11px;display:none}
+  body.family .familychip{display:inline-block}
+  body.family .content{font-size:1.13em}
+  .content{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;overflow:hidden}
+
+  .chatwrap{background:#EFE7DC;border-radius:14px;padding:14px;background-image:radial-gradient(rgba(24,36,82,.05) 1px,transparent 1px);background-size:14px 14px}
+  .fwd{font-family:var(--sys);font-size:12px;color:#7a7f8c;font-style:italic;margin-bottom:6px}
+  .bubble{background:#E2FFD4;border-radius:4px 14px 14px 14px;padding:10px 12px;font-family:var(--sys);font-size:15.5px;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.08);white-space:pre-line}
+  .chatmeta{font-family:var(--sys);font-size:11px;color:#8a8f9c;text-align:right;margin-top:6px}
+
+  .newswrap{border:1px solid var(--line);border-radius:14px;padding:16px}
+  .newssrc{display:flex;align-items:center;gap:7px;font-family:var(--sys);font-size:12px;color:var(--muted);margin-bottom:10px}
+  .newssrc .fav{width:9px;height:9px;border-radius:50%;background:var(--red);display:inline-block}
+  .newshead{font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.28}
+
+  .imgwrap{border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .imgwrap img{width:100%;height:240px;object-fit:cover;display:block}
+  .imgcap{font-family:var(--sys);font-size:12.5px;color:var(--muted);padding:9px 12px;background:#fff}
+
+  .ghost{position:absolute;top:20px;font-weight:900;font-size:24px;letter-spacing:1px;padding:8px 14px;border:4px solid;border-radius:10px;opacity:0;pointer-events:none;background:#fff}
+  .ghost.g-real{right:18px;color:var(--green);border-color:var(--green);transform:rotate(10deg)}
+  .ghost.g-hoax{left:18px;color:var(--red);border-color:var(--red);transform:rotate(-10deg)}
+
+  .verdicts{display:flex;gap:12px}
+  .vbtn{flex:1;border-radius:16px;padding:16px 10px;font-weight:900;font-size:16px;color:#fff;transition:transform .08s ease,box-shadow .08s ease}
+  .vbtn small{display:block;font-weight:600;font-size:11px;opacity:.85;margin-top:2px}
+  .vbtn.hoax{background:var(--red);box-shadow:4px 4px 0 #8f1d21}
+  .vbtn.real{background:var(--green);box-shadow:4px 4px 0 #0d4d2c}
+  .vbtn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 rgba(0,0,0,.3)}
+  .swipehint{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+
+  /* ---------- reveal sheet ---------- */
+  .backdrop{position:fixed;inset:0;background:rgba(24,36,82,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:8}
+  .backdrop.show{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;left:50%;bottom:0;transform:translate(-50%,105%);
+    width:100%;max-width:440px;background:#fff;border-radius:24px 24px 0 0;
+    padding:22px 20px calc(20px + env(safe-area-inset-bottom));z-index:9;
+    transition:transform .3s cubic-bezier(.2,.8,.3,1);box-shadow:0 -10px 40px rgba(24,36,82,.25);
+    max-height:82dvh;overflow:auto;
+  }
+  .sheet.show{transform:translate(-50%,0)}
+  .stamp{
+    display:inline-block;font-weight:900;font-size:34px;letter-spacing:2px;
+    padding:8px 18px;border:5px solid;border-radius:12px;transform:rotate(-7deg);
+    margin:2px 0 14px;
+  }
+  .stamp.real{color:var(--green);border-color:var(--green);background:rgba(24,137,79,.07)}
+  .stamp.hoax{color:var(--red);border-color:var(--red);background:rgba(229,72,77,.07)}
+  @keyframes slam{0%{transform:rotate(-7deg) scale(1.9);opacity:0}70%{transform:rotate(-7deg) scale(.95);opacity:1}100%{transform:rotate(-7deg) scale(1)}}
+  .sheet.show .stamp{animation:slam .38s ease-out}
+  .resline{font-weight:800;font-size:15px;margin-bottom:12px}
+  .resline.ok{color:var(--green)} .resline.no{color:var(--red)}
+  .whylabel{font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .whytext{font-size:15px;line-height:1.55;margin-bottom:14px}
+  .habit{display:flex;gap:10px;align-items:flex-start;background:var(--chip);border-radius:14px;padding:12px 14px;margin-bottom:16px}
+  .habit .hic{font-size:20px}
+  .habit .ht{font-size:13.5px;line-height:1.5}
+  .habit .ht b{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .nextbtn{width:100%;background:var(--ink);color:#fff;font-weight:900;font-size:16px;border-radius:14px;padding:15px;box-shadow:4px 4px 0 var(--sun)}
+  .nextbtn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--sun)}
+
+  /* ---------- results ---------- */
+  .bigscore{font-weight:900;font-style:italic;font-size:96px;line-height:1;margin:4px 0 2px}
+  .tier{font-family:var(--serif);font-style:italic;font-size:24px;margin-bottom:10px}
+  .baseline{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;font-size:13.5px;line-height:1.5;color:var(--muted);margin:14px 0 20px}
+  .shareRow{display:grid;gap:10px}
+  .sharebtn{border-radius:14px;padding:15px;font-weight:900;font-size:15px}
+  .sharebtn.wa{background:var(--green);color:#fff;box-shadow:4px 4px 0 #0d4d2c}
+  .sharebtn.copy{background:var(--card);border:2px solid var(--ink);color:var(--ink)}
+  .sharebtn.again{background:var(--sun);color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+  .sharebtn:active{transform:translate(2px,2px);box-shadow:none}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= START ================= -->
+  <section class="screen active" id="scr-start">
+    <div class="topbar">
+      <div class="brand">MAIN<span class="dot">.</span></div>
+      <div class="langpill" role="group" aria-label="Language">
+        <button id="lang-id" class="on" onclick="setLang('id')">ID</button>
+        <button id="lang-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="kicker" data-i18n="kicker"></div>
+      <h1 class="logo"><em>MAIN</em></h1>
+      <div class="subtitle" data-i18n="subtitle"></div>
+      <p class="tagline" data-i18n="tagline"></p>
+    </div>
+
+    <div class="howto">
+      <div class="howrow"><span class="ic">👈</span><span data-i18n="how1"></span></div>
+      <div class="howrow"><span class="ic">👉</span><span data-i18n="how2"></span></div>
+      <div class="howrow"><span class="ic">💡</span><span data-i18n="how3"></span></div>
+    </div>
+
+    <div class="modes" role="group" aria-label="Mode">
+      <button class="mode on" id="mode-solo" onclick="setMode(false)"><span data-i18n="solo"></span><small data-i18n="soloSub"></small></button>
+      <button class="mode" id="mode-family" onclick="setMode(true)"><span data-i18n="family"></span><small data-i18n="familySub"></small></button>
+    </div>
+
+    <button class="cta" onclick="startGame()" data-i18n="start"></button>
+    <div class="imgtip" id="imgtip" data-i18n="imgTip"></div>
+
+    <p class="foot" data-i18n="disclaimer"></p>
+  </section>
+
+  <!-- ================= GAME ================= -->
+  <section class="screen" id="scr-game">
+    <div class="hud">
+      <div class="hudchip" id="hud-round">1/10</div>
+      <div class="hudchip warm" id="hud-streak">🔥 0</div>
+      <div class="spacer"></div>
+      <div class="hudchip brand" style="font-style:italic;font-weight:900">MAIN</div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="verdicts">
+      <button class="vbtn hoax" onclick="choose('hoax')">✕ <span data-i18n="btnHoax"></span><small data-i18n="btnHoaxSub"></small></button>
+      <button class="vbtn real" onclick="choose('real')">✓ <span data-i18n="btnReal"></span><small data-i18n="btnRealSub"></small></button>
+    </div>
+    <div class="swipehint" data-i18n="swipeHint"></div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section class="screen" id="scr-end">
+    <div class="topbar"><div class="brand">MAIN<span class="dot">.</span></div></div>
+    <div style="margin-top:4vh">
+      <div class="kicker" data-i18n="scoreLabel"></div>
+      <div class="bigscore" id="finalpct">0%</div>
+      <div class="tier" id="tier"></div>
+      <div id="finaldetail" style="font-size:14.5px;color:var(--muted)"></div>
+      <div class="baseline" data-i18n="baseline"></div>
+      <div class="shareRow">
+        <button class="sharebtn wa" onclick="shareWA()" data-i18n="shareWA"></button>
+        <button class="sharebtn copy" id="copybtn" onclick="copyResult()" data-i18n="copy"></button>
+        <button class="sharebtn again" onclick="startGame()" data-i18n="again"></button>
+      </div>
+    </div>
+    <p class="foot" data-i18n="credits"></p>
+  </section>
+</div>
+
+<!-- ================= REVEAL SHEET ================= -->
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="stamp" id="stamp"></div>
+  <div class="resline" id="resline"></div>
+  <div class="whylabel" data-i18n="whyLabel"></div>
+  <div class="whytext" id="whytext"></div>
+  <div class="habit"><span class="hic">🧠</span><div class="ht"><b data-i18n="habitLabel"></b><span id="habittext"></span></div></div>
+  <button class="nextbtn" id="nextbtn" onclick="nextCard()"></button>
+</div>
+
+<script>
+"use strict";
+
+/* ================= I18N ================= */
+const STR = {
+  id: {
+    kicker: "ASLI ATAU AI?",
+    subtitle: "Asli atau AI?",
+    tagline: "Gim latihan 2 menit untuk mengenali konten buatan AI dan hoaks, satu geseran sekali waktu.",
+    how1: "Geser KIRI kalau menurutmu itu AI atau hoaks",
+    how2: "Geser KANAN kalau menurutmu itu asli",
+    how3: "Setiap jawaban ada pelajaran 10 detik: kenapa, dan cara ceknya",
+    solo: "Solo", soloSub: "Latih dirimu",
+    family: "Mode Keluarga", familySub: "Main bareng orang tua",
+    start: "MAIN SEKARANG",
+    imgTip: "🖼️ Ronde Foto belum aktif: tambahkan gambar ke folder assets/ (lihat README) untuk membukanya.",
+    disclaimer: "Konten latihan: item hoaks diadaptasi dari hoaks yang sudah dibantah publik oleh pemeriksa fakta. Item asli berbasis fakta terverifikasi. Tidak ada AI berjalan di dalam gim ini. Dibuat untuk UNESCO Youth Hackathon 2026.",
+    btnHoax: "AI · HOAKS", btnHoaxSub: "geser kiri",
+    btnReal: "ASLI", btnRealSub: "geser kanan",
+    swipeHint: "Geser kartunya, atau tekan tombol",
+    familyChip: "💬 Bahas bareng dulu, baru jawab",
+    typeChat: "Pesan", typeNews: "Judul Berita", typePhoto: "Foto",
+    fwd: "↪︎ Diteruskan berkali-kali",
+    stampReal: "ASLI ✓", stampHoax: "AI · HOAKS ✕",
+    correct: "Tepat! +10", wrong: "Kena tipu! Streak putus",
+    whyLabel: "Kenapa?", habitLabel: "Kebiasaan MIL",
+    next: "Lanjut", finish: "Lihat Skor",
+    scoreLabel: "SKOR DETEKSIMU",
+    tiers: ["Hoaks masih bisa menipumu. Ayo latih terus!", "Hampir! Sekali main lagi pasti naik.", "Mata tajam. Sedikit lagi jadi detektif.", "Detektif Digital! 🔎"],
+    detail: (c,t) => `Benar ${c} dari ${t} item`,
+    baseline: "Sesi pertamamu adalah baseline. Main lagi besok dan lihat berapa poin kemampuan deteksimu naik.",
+    shareWA: "Tantang keluarga di WhatsApp",
+    copy: "Salin hasil", copied: "Tersalin ✓",
+    again: "Main lagi",
+    shareText: p => `Skor deteksiku di MAIN: ${p}% 🔎 Asli atau AI? Berani coba kalahkan aku?`,
+    credits: "MAIN · Play your part. Spot the fake. · UNESCO Youth Hackathon 2026",
+  },
+  en: {
+    kicker: "REAL OR AI?",
+    subtitle: "Real or AI?",
+    tagline: "A 2-minute training game for spotting AI-generated content and hoaxes, one swipe at a time.",
+    how1: "Swipe LEFT if you think it is AI or a hoax",
+    how2: "Swipe RIGHT if you think it is real",
+    how3: "Every answer comes with a 10-second lesson: why, and how to check",
+    solo: "Solo", soloSub: "Train yourself",
+    family: "Family Mode", familySub: "Play with your parents",
+    start: "PLAY NOW",
+    imgTip: "🖼️ Photo rounds are locked: add images to the assets/ folder (see README) to unlock them.",
+    disclaimer: "Training content: hoax items are adapted from publicly debunked hoaxes documented by fact-checkers. Real items are based on verified facts. No live AI runs inside this game. Built for the UNESCO Youth Hackathon 2026.",
+    btnHoax: "AI · HOAX", btnHoaxSub: "swipe left",
+    btnReal: "REAL", btnRealSub: "swipe right",
+    swipeHint: "Swipe the card, or tap a button",
+    familyChip: "💬 Discuss together first, then answer",
+    typeChat: "Message", typeNews: "Headline", typePhoto: "Photo",
+    fwd: "↪︎ Forwarded many times",
+    stampReal: "REAL ✓", stampHoax: "AI · HOAX ✕",
+    correct: "Correct! +10", wrong: "Fooled! Streak broken",
+    whyLabel: "Why?", habitLabel: "MIL Habit",
+    next: "Next", finish: "See Score",
+    scoreLabel: "YOUR DETECTION SCORE",
+    tiers: ["Hoaxes can still fool you. Keep training!", "Almost! One more round and you level up.", "Sharp eyes. Nearly a detective.", "Digital Detective! 🔎"],
+    detail: (c,t) => `${c} of ${t} items correct`,
+    baseline: "Your first session is your baseline. Play again tomorrow and watch your detection score climb.",
+    shareWA: "Challenge your family on WhatsApp",
+    copy: "Copy result", copied: "Copied ✓",
+    again: "Play again",
+    shareText: p => `My detection score on MAIN: ${p}% 🔎 Real or AI? Think you can beat me?`,
+    credits: "MAIN · Play your part. Spot the fake. · UNESCO Youth Hackathon 2026",
+  }
+};
+
+/* ================= CONTENT PACK =================
+   answer: "hoax" = AI-generated or hoax · "real" = authentic
+   Hoax items are adapted from hoax archetypes already publicly
+   debunked by Indonesian fact-checkers. */
+const ITEMS = [
+  { id:"chain1", type:"chat", answer:"hoax",
+    text:{ id:"PENTING!! Mulai besok WhatsApp jadi BERBAYAR. Kirim pesan ini ke 10 kontak supaya akunmu tetap GRATIS. Jangan diabaikan!!",
+           en:"IMPORTANT!! Starting tomorrow WhatsApp will be PAID. Forward this to 10 contacts to keep your account FREE. Do not ignore!!" },
+    tells:{ id:"Tiga ciri pesan berantai klasik: rasa mendesak, ancaman, dan perintah untuk meneruskan. Platform resmi tidak pernah mengumumkan kebijakan lewat pesan berantai.",
+            en:"Three classic chain-message tells: urgency, a threat, and an order to forward. Real platforms never announce policy through chain messages." },
+    habit:{ id:"Berhenti sebelum meneruskan. Cek pengumuman di situs atau akun resmi dulu.",
+            en:"Pause before forwarding. Check the official site or account first." } },
+
+  { id:"prize1", type:"chat", answer:"hoax",
+    text:{ id:"Selamat! Nomor Anda terpilih memenangkan Rp175.000.000 dari Undian Nasabah. Klaim segera sebelum hangus: bit.ly/hadiah-resmi2026",
+           en:"Congratulations! Your number has been selected to win Rp175,000,000 in the Customer Lucky Draw. Claim now before it expires: bit.ly/official-prize2026" },
+    tells:{ id:"Menang undian yang tidak pernah kamu ikuti, tautan pendek yang menyembunyikan alamat asli, dan tekanan waktu. Pola baku penipuan phishing.",
+            en:"Winning a draw you never entered, a short link hiding the real address, and time pressure. The standard phishing pattern." },
+    habit:{ id:"Jangan klik. Ketik sendiri alamat resmi lembaganya dan cek di sana.",
+            en:"Do not click. Type the organization's official address yourself and check there." } },
+
+  { id:"job1", type:"chat", answer:"hoax",
+    text:{ id:"LOKER ONLINE: cukup like & subscribe video, gaji Rp500.000/hari. Tanpa pengalaman. Kuota terbatas, chat admin sekarang!",
+           en:"ONLINE JOB: just like & subscribe to videos, earn Rp500,000/day. No experience needed. Limited slots, chat the admin now!" },
+    tells:{ id:"Bayaran besar untuk tugas sepele itu tidak masuk akal. Skema ini biasanya berakhir dengan korban diminta 'deposit' lebih dulu.",
+            en:"Huge pay for a trivial task makes no sense. This scheme usually ends with victims asked to pay a 'deposit' first." },
+    habit:{ id:"Uji 'terlalu bagus untuk jadi nyata'. Kalau iya, hampir pasti bukan nyata.",
+            en:"Apply the too-good-to-be-true test. If it is, it almost certainly is not true." } },
+
+  { id:"cure1", type:"headline", answer:"hoax",
+    src:{ id:"sehat-alami.blog · 2 jam lalu", en:"natural-health.blog · 2h ago" },
+    text:{ id:"TERBUKTI! Rebusan daun ini sembuhkan diabetes dalam 7 hari tanpa obat dokter",
+           en:"PROVEN! This boiled leaf cures diabetes in 7 days without any medicine" },
+    tells:{ id:"Klaim medis mutlak ('terbukti', 'sembuh total') tanpa riset atau lembaga kesehatan yang bisa dicek. Penyakit kronis tidak sembuh dalam 7 hari.",
+            en:"Absolute medical claims ('proven', 'cures') with no checkable research or health authority. Chronic diseases do not vanish in 7 days." },
+    habit:{ id:"Baca menyamping: cari nama klaimnya di situs kesehatan resmi sebelum percaya.",
+            en:"Read laterally: search the claim on official health sites before believing it." } },
+
+  { id:"money1", type:"headline", answer:"hoax",
+    src:{ id:"kabarviral.net · 5 jam lalu", en:"viralnews.net · 5h ago" },
+    text:{ id:"BEREDAR: Semua uang kertas Rp100.000 ditarik dari peredaran mulai bulan depan",
+           en:"CIRCULATING: All Rp100,000 banknotes will be withdrawn from circulation next month" },
+    tells:{ id:"Kebijakan sebesar ini pasti diumumkan langsung oleh bank sentral. Kata 'beredar' tanpa sumber resmi adalah bendera merah.",
+            en:"A policy this big would be announced by the central bank itself. 'Circulating' with no official source is a red flag." },
+    habit:{ id:"Cek langsung ke sumber resmi: situs atau akun terverifikasi lembaganya.",
+            en:"Go straight to the official source: the institution's verified site or account." } },
+
+  { id:"snake1", type:"headline", answer:"hoax",
+    src:{ id:"beritaheboh.co · kemarin", en:"shockingnews.co · yesterday" },
+    text:{ id:"HEBOH! Warga temukan ular sepanjang 50 meter di pedalaman Kalimantan",
+           en:"SHOCKING! Villagers find a 50-meter snake deep in the Borneo jungle" },
+    tells:{ id:"Ular terpanjang yang pernah tercatat sekitar 10 meter. Angka sensasional yang jauh melampaui rekor dunia hampir selalu rekayasa atau hasil AI.",
+            en:"The longest snake ever recorded is about 10 meters. Sensational numbers far beyond world records are almost always fabricated or AI-made." },
+    habit:{ id:"Cek fotonya dengan pencarian gambar terbalik sebelum ikut kaget.",
+            en:"Reverse image search the photo before you join the panic." } },
+
+  { id:"island1", type:"headline", answer:"real",
+    src:{ id:"Ensiklopedia · fakta geografi", en:"Encyclopedia · geography fact" },
+    text:{ id:"Indonesia memiliki lebih dari 17.000 pulau",
+           en:"Indonesia is made up of more than 17,000 islands" },
+    tells:{ id:"Fakta geografis yang konsisten di banyak sumber resmi dan mudah diverifikasi. Angkanya masuk akal dan tidak dilebih-lebihkan.",
+            en:"A geographic fact consistent across many official sources and easy to verify. The number is plausible, not inflated." },
+    habit:{ id:"Fakta asli tahan diuji: bandingkan cepat di dua sumber tepercaya.",
+            en:"Real facts survive checking: compare quickly across two trusted sources." } },
+
+  { id:"batik1", type:"headline", answer:"real",
+    src:{ id:"Arsip budaya · 2009", en:"Cultural archive · 2009" },
+    text:{ id:"Batik ditetapkan UNESCO sebagai Warisan Budaya Takbenda pada 2009",
+           en:"Batik was inscribed by UNESCO as Intangible Cultural Heritage in 2009" },
+    tells:{ id:"Peristiwa terdokumentasi dengan tanggal dan lembaga yang jelas, bisa dicek langsung di situs UNESCO.",
+            en:"A documented event with a clear date and institution, checkable directly on UNESCO's own site." },
+    habit:{ id:"Klaim dengan lembaga + tanggal paling mudah dicek. Manfaatkan itu.",
+            en:"Claims with an institution + a date are the easiest to check. Use that." } },
+
+  { id:"volcano1", type:"headline", answer:"real",
+    src:{ id:"Ensiklopedia · geologi", en:"Encyclopedia · geology" },
+    text:{ id:"Indonesia memiliki lebih dari 100 gunung berapi aktif",
+           en:"Indonesia has more than 100 active volcanoes" },
+    tells:{ id:"Konsisten dengan data lembaga geologi dan sumber sains. Perhatikan: asli bukan berarti tidak mengejutkan, tapi bisa diverifikasi.",
+            en:"Consistent with geological agencies and science sources. Note: real does not mean unsurprising, it means verifiable." },
+    habit:{ id:"Mengejutkan ≠ palsu. Ukur klaim dari bukti, bukan dari rasa kaget.",
+            en:"Surprising ≠ fake. Judge a claim by evidence, not by shock." } },
+
+  { id:"komodo1", type:"headline", answer:"real",
+    src:{ id:"Ensiklopedia · satwa", en:"Encyclopedia · wildlife" },
+    text:{ id:"Komodo di alam liar hanya hidup di beberapa pulau di Indonesia",
+           en:"In the wild, Komodo dragons live only on a few islands in Indonesia" },
+    tells:{ id:"Fakta biologi mapan yang mudah dikonfirmasi lewat sumber konservasi resmi.",
+            en:"An established biology fact, easy to confirm through official conservation sources." },
+    habit:{ id:"Biasakan cek 5 detik bahkan untuk hal yang 'kayaknya benar'.",
+            en:"Build the 5-second check habit, even for things that 'sound right'." } },
+
+  { id:"mom1", type:"chat", answer:"real",
+    text:{ id:"Nak, nanti pulang kerja mampir ya. Ibu masak rendang kesukaanmu 😊",
+           en:"Sweetheart, stop by after work today. I cooked your favorite rendang 😊" },
+    tells:{ id:"Tidak semua pesan itu jebakan. Pesan pribadi dari kontak dikenal, tanpa tautan, tanpa permintaan aneh. Skeptis sehat ≠ curiga pada segalanya.",
+            en:"Not every message is a trap. A personal note from a known contact, no links, no odd requests. Healthy skepticism ≠ suspecting everything." },
+    habit:{ id:"Nilai konteks dan pengirim. Waspada pada pola, bukan paranoid pada semua.",
+            en:"Judge context and sender. Watch for patterns, do not be paranoid about everything." } },
+
+  { id:"rt1", type:"chat", answer:"real",
+    text:{ id:"Pengumuman RT 05: kerja bakti hari Minggu jam 07.00 di balai warga. Mohon bawa alat kebersihan masing-masing. Terima kasih 🙏",
+           en:"Neighborhood notice: community clean-up this Sunday at 7 AM at the community hall. Please bring your own cleaning tools. Thank you 🙏" },
+    tells:{ id:"Info lokal yang spesifik, bisa langsung dicek ke pengurus RT. Tidak ada tautan, tidak ada permintaan uang atau data.",
+            en:"Specific local info you can verify directly with the organizer. No links, no requests for money or data." },
+    habit:{ id:"Untuk info lokal, verifikasi paling cepat: tanya langsung sumber terdekat.",
+            en:"For local info, the fastest check is asking the source directly." } },
+
+  /* ---- photo rounds: unlocked when images exist in assets/ ---- */
+  { id:"img-ai1", type:"image", answer:"hoax", img:"assets/ai-01.jpg",
+    cap:{ id:"Foto viral di grup keluarga pagi ini", en:"Photo going viral in a family group this morning" },
+    tells:{ id:"Periksa jari dan tangan, teks pada benda, serta tekstur kulit yang terlalu mulus. Generator AI paling sering gagal di detail-detail itu.",
+            en:"Check fingers and hands, text on objects, and skin that looks too smooth. AI generators most often fail on those details." },
+    habit:{ id:"Zoom detailnya, lalu cek dengan pencarian gambar terbalik.",
+            en:"Zoom into the details, then run a reverse image search." } },
+  { id:"img-real1", type:"image", answer:"real", img:"assets/real-01.jpg",
+    cap:{ id:"Kiriman kerabat dari kampung", en:"Sent by a relative back home" },
+    tells:{ id:"Detail alami: pencahayaan konsisten, tangan wajar, latar belakang logis. Asli bukan berarti sempurna, justru ketidaksempurnaan alami itu petunjuknya.",
+            en:"Natural details: consistent lighting, normal hands, a logical background. Real does not mean flawless, natural imperfection is the clue." },
+    habit:{ id:"Bandingkan cahaya, bayangan, dan latar. Dunia nyata itu konsisten.",
+            en:"Compare light, shadows, and background. The real world is consistent." } },
+  { id:"img-ai2", type:"image", answer:"hoax", img:"assets/ai-02.jpg",
+    cap:{ id:"'Penampakan langka', kata caption-nya", en:"'A rare sighting', says the caption" },
+    tells:{ id:"Terlalu dramatis dan terlalu pas dengan caption-nya. Konten yang dirancang memancing emosi adalah kandidat utama buatan AI.",
+            en:"Too dramatic and too perfectly matched to its caption. Content engineered to trigger emotion is a prime AI candidate." },
+    habit:{ id:"Makin kuat emosimu, makin wajib berhenti dan cek dulu.",
+            en:"The stronger your emotional reaction, the more you need to pause and check." } },
+  { id:"img-real2", type:"image", answer:"real", img:"assets/real-02.jpg",
+    cap:{ id:"Dokumentasi kegiatan warga", en:"Community event documentation" },
+    tells:{ id:"Konteks jelas, sumber bisa ditelusuri, dan detail kecil (wajah, tulisan, bayangan) tetap wajar saat di-zoom.",
+            en:"Clear context, a traceable source, and small details (faces, text, shadows) stay normal when zoomed." },
+    habit:{ id:"Sumber yang bisa ditelusuri adalah teman terbaik verifikasi.",
+            en:"A traceable source is verification's best friend." } },
+];
+
+/* ================= STATE ================= */
+let lang = (navigator.language || "id").toLowerCase().startsWith("id") ? "id" : "en";
+let family = false;
+let deck = [], idx = 0, score = 0, streak = 0, correctCount = 0;
+const loadedImgs = new Set();
+
+/* ================= I18N APPLY ================= */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const k = el.getAttribute("data-i18n");
+    if (typeof STR[lang][k] === "string") el.textContent = STR[lang][k];
+  });
+  document.getElementById("lang-id").classList.toggle("on", lang === "id");
+  document.getElementById("lang-en").classList.toggle("on", lang === "en");
+}
+function setLang(l){ lang = l; applyLang(); if (document.getElementById("scr-game").classList.contains("active")) renderCard(); }
+function setMode(f){
+  family = f;
+  document.body.classList.toggle("family", f);
+  document.getElementById("mode-solo").classList.toggle("on", !f);
+  document.getElementById("mode-family").classList.toggle("on", f);
+}
+
+/* ================= IMAGE PRELOAD ================= */
+ITEMS.filter(i => i.type === "image").forEach(i => {
+  const im = new Image();
+  im.onload = () => loadedImgs.add(i.img);
+  im.onerror = () => updateImgTip();
+  im.src = i.img;
+});
+function updateImgTip(){
+  const anyMissing = ITEMS.some(i => i.type === "image" && !loadedImgs.has(i.img));
+  document.getElementById("imgtip").style.display = anyMissing ? "block" : "none";
+}
+setTimeout(updateImgTip, 1500);
+
+/* ================= GAME FLOW ================= */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function startGame(){
+  const imgs = shuffle(ITEMS.filter(i => i.type === "image" && loadedImgs.has(i.img))).slice(0,4);
+  const texts = shuffle(ITEMS.filter(i => i.type !== "image"));
+  deck = shuffle(imgs.concat(texts.slice(0, 10 - imgs.length)));
+  idx = 0; score = 0; streak = 0; correctCount = 0;
+  show("scr-game");
+  renderCard();
+}
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function cardInner(item){
+  const t = STR[lang];
+  if (item.type === "chat"){
+    return `<div class="chatwrap"><div class="fwd">${t.fwd}</div>
+      <div class="bubble">${item.text[lang]}</div>
+      <div class="chatmeta">14.02 ✓✓</div></div>`;
+  }
+  if (item.type === "headline"){
+    return `<div class="newswrap">
+      <div class="newssrc"><span class="fav"></span>${item.src[lang]}</div>
+      <div class="newshead">${item.text[lang]}</div></div>`;
+  }
+  return `<div class="imgwrap"><img src="${item.img}" alt="">
+    <div class="imgcap">${item.cap[lang]}</div></div>`;
+}
+
+function typeLabel(item){
+  const t = STR[lang];
+  return item.type === "chat" ? t.typeChat : item.type === "headline" ? t.typeNews : t.typePhoto;
+}
+
+function renderCard(){
+  const t = STR[lang];
+  document.getElementById("hud-round").textContent = `${idx+1}/${deck.length}`;
+  document.getElementById("hud-streak").textContent = `🔥 ${streak}`;
+  const stage = document.getElementById("stage");
+  stage.innerHTML = "";
+  if (deck[idx+1]){
+    const behind = document.createElement("div");
+    behind.className = "card behind";
+    behind.innerHTML = `<div class="typechip">${typeLabel(deck[idx+1])}</div>`;
+    stage.appendChild(behind);
+  }
+  const item = deck[idx];
+  const card = document.createElement("div");
+  card.className = "card";
+  card.id = "topcard";
+  card.innerHTML = `
+    <div class="typechip">${typeLabel(item)}</div>
+    <div class="familychip">${t.familyChip}</div>
+    <div class="content">${cardInner(item)}</div>
+    <div class="ghost g-real">${t.stampReal}</div>
+    <div class="ghost g-hoax">${t.stampHoax}</div>`;
+  stage.appendChild(card);
+  attachDrag(card);
+}
+
+/* ================= DRAG / SWIPE ================= */
+function attachDrag(card){
+  let startX = 0, dx = 0, dragging = false;
+  const gR = card.querySelector(".g-real"), gH = card.querySelector(".g-hoax");
+  card.addEventListener("pointerdown", e => {
+    dragging = true; startX = e.clientX; dx = 0;
+    card.classList.remove("spring");
+    card.setPointerCapture(e.pointerId);
+  });
+  card.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    dx = e.clientX - startX;
+    card.style.transform = `translateX(${dx}px) rotate(${dx/18}deg)`;
+    gR.style.opacity = Math.min(Math.max(dx,0)/90, 1);
+    gH.style.opacity = Math.min(Math.max(-dx,0)/90, 1);
+  });
+  const end = () => {
+    if (!dragging) return;
+    dragging = false;
+    if (dx > 90) choose("real");
+    else if (dx < -90) choose("hoax");
+    else {
+      card.classList.add("spring");
+      card.style.transform = "";
+      gR.style.opacity = 0; gH.style.opacity = 0;
+    }
+  };
+  card.addEventListener("pointerup", end);
+  card.addEventListener("pointercancel", end);
+}
+
+document.addEventListener("keydown", e => {
+  if (!document.getElementById("scr-game").classList.contains("active")) return;
+  if (document.getElementById("sheet").classList.contains("show")){
+    if (e.key === "Enter") nextCard();
+    return;
+  }
+  if (e.key === "ArrowLeft") choose("hoax");
+  if (e.key === "ArrowRight") choose("real");
+});
+
+/* ================= ANSWER ================= */
+function choose(pick){
+  const sheet = document.getElementById("sheet");
+  if (sheet.classList.contains("show")) return;
+  const item = deck[idx];
+  const t = STR[lang];
+  const card = document.getElementById("topcard");
+  if (card){
+    card.classList.add("fly");
+    card.style.transform = `translateX(${pick === "real" ? 480 : -480}px) rotate(${pick === "real" ? 24 : -24}deg)`;
+  }
+  const isReal = item.answer === "real";
+  const correct = (pick === "real") === isReal;
+  if (correct){ score += 10; streak += 1; correctCount += 1; } else { streak = 0; }
+
+  const stamp = document.getElementById("stamp");
+  stamp.textContent = isReal ? t.stampReal : t.stampHoax;
+  stamp.className = "stamp " + (isReal ? "real" : "hoax");
+  const res = document.getElementById("resline");
+  res.textContent = correct ? `${t.correct} · 🔥 ${streak}` : t.wrong;
+  res.className = "resline " + (correct ? "ok" : "no");
+  document.getElementById("whytext").textContent = item.tells[lang];
+  document.getElementById("habittext").textContent = item.habit[lang];
+  document.getElementById("nextbtn").textContent = (idx + 1 >= deck.length) ? t.finish : t.next;
+  document.querySelector("[data-i18n='whyLabel']").textContent = t.whyLabel;
+  document.querySelector("[data-i18n='habitLabel']").textContent = t.habitLabel;
+
+  setTimeout(() => {
+    document.getElementById("backdrop").classList.add("show");
+    sheet.classList.add("show");
+  }, 180);
+}
+
+function nextCard(){
+  document.getElementById("backdrop").classList.remove("show");
+  document.getElementById("sheet").classList.remove("show");
+  idx += 1;
+  if (idx >= deck.length){ showResults(); } else { renderCard(); }
+}
+
+/* ================= RESULTS ================= */
+function showResults(){
+  const t = STR[lang];
+  const pct = Math.round((correctCount / deck.length) * 100);
+  document.getElementById("finalpct").textContent = pct + "%";
+  const tier = pct >= 80 ? 3 : pct >= 60 ? 2 : pct >= 40 ? 1 : 0;
+  document.getElementById("tier").textContent = t.tiers[tier];
+  document.getElementById("finaldetail").textContent = t.detail(correctCount, deck.length);
+  show("scr-end");
+}
+
+function shareWA(){
+  const t = STR[lang];
+  const pct = document.getElementById("finalpct").textContent;
+  const msg = t.shareText(parseInt(pct)) + " " + location.href;
+  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+}
+
+function copyResult(){
+  const t = STR[lang];
+  const pct = document.getElementById("finalpct").textContent;
+  const msg = t.shareText(parseInt(pct)) + " " + location.href;
+  const done = () => {
+    const b = document.getElementById("copybtn");
+    b.textContent = t.copied;
+    setTimeout(() => { b.textContent = t.copy; }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(msg).then(done).catch(done);
+  } else { done(); }
+}
+
+/* ================= INIT ================= */
+applyLang();
+setMode(false);
+</script>
+</body>
+</html>
