@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#C81D33">
 <title>MAIN · Asli atau AI?</title>
+<meta name="description" content="MAIN — a 2-minute training game for spotting AI-generated content and hoaxes, one swipe at a time. Built for the UNESCO Youth Hackathon 2026.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔎</text></svg>">
+<meta property="og:title" content="MAIN · Asli atau AI?">
+<meta property="og:description" content="Can you tell what is AI and what is real? A 2-minute swipe game that trains your hoax detection.">
+<meta property="og:url" content="https://leofire19.github.io/main-game/">
+<meta property="og:image" content="https://leofire19.github.io/main-game/assets/ai-02.jpg">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
@@ -476,7 +483,7 @@ function setMode(f){
 /* ================= IMAGE PRELOAD ================= */
 ITEMS.filter(i => i.type === "image").forEach(i => {
   const im = new Image();
-  im.onload = () => loadedImgs.add(i.img);
+  im.onload = () => { loadedImgs.add(i.img); updateImgTip(); };
   im.onerror = () => updateImgTip();
   im.src = i.img;
 });
